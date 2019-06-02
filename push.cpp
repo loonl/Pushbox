@@ -1,52 +1,101 @@
 #include <ncurses.h>
 
-int map[9][7] = {{1,1,1,1,4,4,4},{1,3,0,1,1,4,4},{1,3,0,0,1,4,4},{1,3,0,2,1,4,4},{1,1,2,0,1,1,1},{4,1,0,2,0,0,1},{4,1,0,0,0,0,1},{4,1,0,5,1,1,1},{4,1,1,1,1,4,4}};
+int map[3][100][100] = {{{1,1,1,1,0,0,0},
+                         {1,3,4,1,1,0,0},
+                         {1,3,4,4,1,0,0},
+                         {1,3,4,2,1,0,0},
+                         {1,1,2,4,1,1,1},
+                         {0,1,4,2,4,4,1},
+                         {0,1,4,4,4,4,1},
+                         {0,1,4,7,1,1,1},
+                         {0,1,1,1,1,0,0}}}; // map max size = 100 x 100, 3 maps / sero - garo
 int curx = 0;
 int cury = 0;
-// 0 = white movable space
+int my_location[2];
+// 0 = black, wall outside
 // 1 = red wall 
-// 2 = box
+// 2 = box (maximum box limit = 3)
 // 3 = where box must be placed
-// 4 = black, wall outside 
+// 4 = white movable space
 // 5 = ME(playable character)
-void Map() {
-    move(cury++,curx);
+// 6 = box on 3
+// 7 = ME on 3
+
+void push(int current_map_idx);
+void Map(int current_map_idx); // printing out real map
+
+int main()
+{
+ int ch;
+ initscr();
+ keypad(stdscr, TRUE);
+ Map(0);
+ // using while(answer == now box location) and implement this code there
+ for (int i = 0; i < 10; i++) {
+  push(0);
+ }
+ //for (int i = 1; i < 3; i++) {
+ //    Map(i);
+ //}
+ endwin();
+ return 0;
+ }
+
+void Map(int current_map_idx) {
+ move(cury++,curx);
  start_color();
- for(int i = 0; i <9; i++) {
-    for(int j = 0; j <7; j++) {
-   int m = map[i][j];
+ for(int i = 0; i <100; i++) { // don't need to be touched/sero
+    for(int j = 0; j <7; j++) { // must be touched! - always fit to garo size/gar
+   int m = map[current_map_idx][i][j];
    switch(m) {
     case 0: 
-            init_pair(1, COLOR_WHITE, COLOR_WHITE);
+            printw(" ");
+            break;
+    case 1: 
+            init_pair(1, COLOR_RED, COLOR_RED);
             attron(COLOR_PAIR(1));
 	    printw(" ");
 	    attroff(COLOR_PAIR(1));
 	    break;
-    case 1: 
-            init_pair(2, COLOR_RED, COLOR_RED);
+    case 2: 
+            init_pair(2, COLOR_YELLOW, COLOR_WHITE);
             attron(COLOR_PAIR(2));
-	    printw(" ");
+	    printw("X");
 	    attroff(COLOR_PAIR(2));
 	    break;
-    case 2: 
-            init_pair(3, COLOR_YELLOW, COLOR_WHITE);
+    case 3: 
+            init_pair(3, COLOR_WHITE, COLOR_GREEN);
             attron(COLOR_PAIR(3));
-	    printw("X");
+	    printw("O");
 	    attroff(COLOR_PAIR(3));
 	    break;
-    case 3: 
-            init_pair(4, COLOR_WHITE, COLOR_GREEN);
+    case 4: 
+            init_pair(4, COLOR_WHITE, COLOR_WHITE);
             attron(COLOR_PAIR(4));
-	    printw("O");
+	    printw(" ");
 	    attroff(COLOR_PAIR(4));
 	    break;
-    case 4: 
-            printw(" ");
-            break;
     case 5: 
             init_pair(5, COLOR_BLACK, COLOR_CYAN);
             attron(COLOR_PAIR(5));
             printw("!");
+            my_location[0] = i;
+            my_location[1] = j;
+            attroff(COLOR_PAIR(5));
+            break;
+    case 6: // box on 3
+            init_pair(6, COLOR_WHITE, COLOR_GREEN);
+            attron(COLOR_PAIR(6));
+            printw("X");
+            attroff(COLOR_PAIR(6));
+            break;
+    case 7: // ME on 3
+            init_pair(7, COLOR_BLACK, COLOR_GREEN);
+            attron(COLOR_PAIR(7));
+            printw("!");
+            my_location[0] = i;
+            my_location[1] = j;   
+            attroff(COLOR_PAIR(7));
             break;
     }
 	if(j == 6) 
@@ -55,14 +104,65 @@ void Map() {
 }
  refresh();
  curs_set(0);
+ cury = 0;
+ curx = 0;
 }
 
-int main()
-{
- initscr();
- Map();
- getch();
- endwin();
- return 0;
- }
-
+// 0 = black, wall outside
+// 1 = red wall 
+// 2 = box (maximum box limit = 3)
+// 3 = where box must be placed
+// 4 = white movable space
+// 5 = ME(playable character)
+// 6 = box on 3
+// 7 = ME on 3
+void push(int current_map_idx) {
+ int ch = getch(); // get input
+ switch(ch) {
+     case KEY_UP:
+        if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 1)
+            break;
+        if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 2) {
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 1)
+                break;
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 2)
+                break;
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 3) {
+                map[current_map_idx][my_location[0] - 2][my_location[1]] = 6;
+                map[current_map_idx][my_location[0] - 1][my_location[1]] = 5;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[0] -= 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 4) {
+                map[current_map_idx][my_location[0] - 2][my_location[1]] = 2;
+                map[current_map_idx][my_location[0] - 1][my_location[1]] = 5;
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[0] -= 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 6)
+                break;
+        } // end if 2
+        if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 3) {
+            break;
+        } // end if 3
+        if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 4) {
+            map[current_map_idx][my_location[0] - 1][my_location[1]] = 5;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            my_location[0] -= 1;
+            break;
+        } // end if 4
+        if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 6) {
+            break;
+        } // end if 6
+ } // end switch
+ erase();
+ Map(current_map_idx);
+}
