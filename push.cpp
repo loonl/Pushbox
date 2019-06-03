@@ -24,98 +24,86 @@ int my_location[2];
 void push(int current_map_idx);
 void Map(int current_map_idx); // printing out real map
 
-int main()
-{
- int ch;
- initscr();
- keypad(stdscr, TRUE);
- Map(0);
+int main() {
+    int ch;
+    initscr();
+    keypad(stdscr, TRUE);
+    Map(0);
  // using while(answer == now box location) and implement this code there
- for (int i = 0; i < 100; i++) {
-  push(0);
- }
- //for (int i = 1; i < 3; i++) {
- //    Map(i);
- //}
- endwin();
- return 0;
- }
+    for (int i = 0; i < 100; i++) {
+        push(0);
+    }
+    endwin();
+    return 0;
+}
 
 void Map(int current_map_idx) {
- move(cury++,curx);
- start_color();
- for(int i = 0; i <100; i++) { // don't need to be touched/sero
-    for(int j = 0; j <7; j++) { // must be touched! - always fit to garo size/gar
-   int m = map[current_map_idx][i][j];
-   switch(m) {
-    case 0: 
-            printw(" ");
-            break;
-    case 1: 
-            init_pair(1, COLOR_RED, COLOR_RED);
-            attron(COLOR_PAIR(1));
-	    printw(" ");
-	    attroff(COLOR_PAIR(1));
-	    break;
-    case 2: 
-            init_pair(2, COLOR_YELLOW, COLOR_WHITE);
-            attron(COLOR_PAIR(2));
-	    printw("X");
-	    attroff(COLOR_PAIR(2));
-	    break;
-    case 3: 
-            init_pair(3, COLOR_WHITE, COLOR_GREEN);
-            attron(COLOR_PAIR(3));
-	    printw("O");
-	    attroff(COLOR_PAIR(3));
-	    break;
-    case 4: 
-            init_pair(4, COLOR_WHITE, COLOR_WHITE);
-            attron(COLOR_PAIR(4));
-	    printw(" ");
-	    attroff(COLOR_PAIR(4));
-	    break;
-    case 5: 
-            init_pair(5, COLOR_BLACK, COLOR_WHITE);
-            attron(COLOR_PAIR(5));
-            printw("!");
-            my_location[0] = i;
-            my_location[1] = j;
-            attroff(COLOR_PAIR(5));
-            break;
-    case 6: // box on 3
-            init_pair(6, COLOR_WHITE, COLOR_GREEN);
-            attron(COLOR_PAIR(6));
-            printw("X");
-            attroff(COLOR_PAIR(6));
-            break;
-    case 7: // ME on 3
-            init_pair(7, COLOR_BLACK, COLOR_GREEN);
-            attron(COLOR_PAIR(7));
-            printw("!");
-            my_location[0] = i;
-            my_location[1] = j;   
-            attroff(COLOR_PAIR(7));
-            break;
-    }
+    move(cury++,curx);
+    start_color();
+    for(int i = 0; i <100; i++) { // don't need to be touched/sero
+        for(int j = 0; j <7; j++) { // must be touched! - always fit to garo size/gar
+            int m = map[current_map_idx][i][j];
+            switch(m) {
+                case 0: 
+                 printw(" ");
+                 break;
+             case 1: 
+                 init_pair(1, COLOR_RED, COLOR_RED);
+                 attron(COLOR_PAIR(1));
+	         printw(" ");
+	         attroff(COLOR_PAIR(1));
+	         break;
+             case 2: 
+                 init_pair(2, COLOR_YELLOW, COLOR_WHITE);
+                 attron(COLOR_PAIR(2));
+	         printw("X");
+	         attroff(COLOR_PAIR(2));
+	         break;
+             case 3: 
+                 init_pair(3, COLOR_WHITE, COLOR_GREEN);
+                 attron(COLOR_PAIR(3));
+	         printw("O");
+	         attroff(COLOR_PAIR(3));
+	         break;
+             case 4: 
+                 init_pair(4, COLOR_WHITE, COLOR_WHITE);
+                 attron(COLOR_PAIR(4));
+	         printw(" ");
+	         attroff(COLOR_PAIR(4));
+ 	         break;
+             case 5: 
+                 init_pair(5, COLOR_BLACK, COLOR_WHITE);
+                 attron(COLOR_PAIR(5));
+                 printw("!");
+                 my_location[0] = i;
+                 my_location[1] = j;
+                 attroff(COLOR_PAIR(5));
+                 break;
+             case 6: // box on 3
+                 init_pair(6, COLOR_WHITE, COLOR_GREEN);
+                 attron(COLOR_PAIR(6));
+                 printw("X");
+                 attroff(COLOR_PAIR(6));
+                 break;
+             case 7: // ME on 3
+                 init_pair(7, COLOR_BLACK, COLOR_GREEN);
+                 attron(COLOR_PAIR(7));
+                 printw("!");
+                 my_location[0] = i;
+                 my_location[1] = j;   
+                 attroff(COLOR_PAIR(7));
+                 break;
+            } // end switch case
 	if(j == 6) 
             move(cury++,0); 
-    }
-}
- refresh();
- curs_set(0);
- cury = 0;
- curx = 0;
+        } // end for j
+    } // end for i
+    refresh();
+    curs_set(0);
+    cury = 0;
+    curx = 0;
 }
 
-// 0 = black, wall outside
-// 1 = red wall 
-// 2 = box (maximum box limit = 3)
-// 3 = where box must be placed
-// 4 = white movable space
-// 5 = ME(playable character)
-// 6 = box on 3
-// 7 = ME on 3
 void push(int current_map_idx) {
  int ch = getch(); // get input
  switch(ch) {
@@ -419,7 +407,7 @@ void push(int current_map_idx) {
         } // end if 6
         // END SWITCH KEY_LEFT
        
- } // end switch
+ } // end switch case
  erase();
  Map(current_map_idx);
 }
