@@ -1,14 +1,14 @@
 #include <ncurses.h>
 
 int map[3][100][100] = {{{1,1,1,1,0,0,0},
-                         {1,3,4,1,1,0,0},
-                         {1,3,4,4,1,0,0},
-                         {1,3,4,2,1,0,0},
-                         {1,1,2,4,1,1,1},
-                         {0,1,4,2,4,4,1},
+                         {1,3,2,1,1,0,0},
+                         {1,3,2,3,1,0,0},
+                         {1,3,2,4,1,0,0},
+                         {1,1,4,4,1,1,1},
                          {0,1,4,4,4,4,1},
-                         {0,1,4,7,1,1,1},
-                         {0,1,1,1,1,0,0}}}; // map max size = 100 x 100, 3 maps / sero - garo
+                         {0,1,4,6,3,4,1},
+                         {0,1,4,5,4,4,1},
+                         {0,1,1,1,1,1,1}}}; // map max size = 100 x 100, 3 maps / sero - garo
 int curx = 0;
 int cury = 0;
 int my_location[2];
@@ -31,7 +31,7 @@ int main()
  keypad(stdscr, TRUE);
  Map(0);
  // using while(answer == now box location) and implement this code there
- for (int i = 0; i < 10; i++) {
+ for (int i = 0; i < 100; i++) {
   push(0);
  }
  //for (int i = 1; i < 3; i++) {
@@ -76,7 +76,7 @@ void Map(int current_map_idx) {
 	    attroff(COLOR_PAIR(4));
 	    break;
     case 5: 
-            init_pair(5, COLOR_BLACK, COLOR_CYAN);
+            init_pair(5, COLOR_BLACK, COLOR_WHITE);
             attron(COLOR_PAIR(5));
             printw("!");
             my_location[0] = i;
@@ -148,6 +148,11 @@ void push(int current_map_idx) {
                 break;
         } // end if 2
         if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 3) {
+            map[current_map_idx][my_location[0] - 1][my_location[1]] = 7;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
             break;
         } // end if 3
         if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 4) {
@@ -160,8 +165,260 @@ void push(int current_map_idx) {
             break;
         } // end if 4
         if (map[current_map_idx][my_location[0] - 1][my_location[1]] == 6) {
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 1)
+                break;
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 2)
+                break;
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 3) {
+                map[current_map_idx][my_location[0] - 2][my_location[1]] = 6;
+                map[current_map_idx][my_location[0] - 1][my_location[1]] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[0] -= 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 4) {
+                map[current_map_idx][my_location[0] - 2][my_location[1]] = 2;
+                map[current_map_idx][my_location[0] - 1][my_location[1]] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[0] -= 1;
+                break; 
+            }
+            if (map[current_map_idx][my_location[0] - 2][my_location[1]] == 6)
+                break;
+        } // end if 6 
+     // END CASE KEY_UP
+
+     case KEY_DOWN:
+        if (map[current_map_idx][my_location[0] + 1][my_location[1]] == 1)
             break;
+        if (map[current_map_idx][my_location[0] + 1][my_location[1]] == 2) {
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 1)
+                break;
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 2)
+                break;
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 3) {
+                map[current_map_idx][my_location[0] + 2][my_location[1]] = 6;
+                map[current_map_idx][my_location[0] + 1][my_location[1]] = 5;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[0] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 4) {
+                map[current_map_idx][my_location[0] + 2][my_location[1]] = 2;
+                map[current_map_idx][my_location[0] + 1][my_location[1]] = 5;
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[0] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 6)
+                break;
+        } // end if 2
+        if (map[current_map_idx][my_location[0] + 1][my_location[1]] == 3) {
+            map[current_map_idx][my_location[0] + 1][my_location[1]] = 7;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            break;
+        } // end if 3
+        if (map[current_map_idx][my_location[0] + 1][my_location[1]] == 4) {
+            map[current_map_idx][my_location[0] + 1][my_location[1]] = 5;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            my_location[0] += 1;
+            break;
+        } // end if 4
+        if (map[current_map_idx][my_location[0] + 1][my_location[1]] == 6) {
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 1)
+                break;
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 2)
+                break;
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 3) {
+                map[current_map_idx][my_location[0] + 2][my_location[1]] = 6;
+                map[current_map_idx][my_location[0] + 1][my_location[1]] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[0] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 4) {
+                map[current_map_idx][my_location[0] + 2][my_location[1]] = 2;
+                map[current_map_idx][my_location[0] + 1][my_location[1]] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[0] += 1;
+                break; 
+            }
+            if (map[current_map_idx][my_location[0] + 2][my_location[1]] == 6)
+                break;
         } // end if 6
+        // END SWITCH KEY_DOWN
+
+     case KEY_RIGHT:
+        if (map[current_map_idx][my_location[0]][my_location[1] + 1] == 1)
+            break;
+        if (map[current_map_idx][my_location[0]][my_location[1] + 1] == 2) {
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 1)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 2)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 3) {
+                map[current_map_idx][my_location[0]][my_location[1] + 2] = 6;
+                map[current_map_idx][my_location[0]][my_location[1] + 1] = 5;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[1] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 4) {
+                map[current_map_idx][my_location[0]][my_location[1] + 2] = 2;
+                map[current_map_idx][my_location[0]][my_location[1] + 1] = 5;
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[1] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 6)
+                break;
+        } // end if 2
+        if (map[current_map_idx][my_location[0]][my_location[1] + 1] == 3) {
+            map[current_map_idx][my_location[0]][my_location[1] + 1] = 7;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            break;
+        } // end if 3
+        if (map[current_map_idx][my_location[0]][my_location[1] + 1] == 4) {
+            map[current_map_idx][my_location[0]][my_location[1] + 1] = 5;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            my_location[1] += 1;
+            break;
+        } // end if 4
+        if (map[current_map_idx][my_location[0]][my_location[1] + 1] == 6) {
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 1)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 2)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 3) {
+                map[current_map_idx][my_location[0]][my_location[1] + 2] = 6;
+                map[current_map_idx][my_location[0]][my_location[1] + 1] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[1] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 4) {
+                map[current_map_idx][my_location[0]][my_location[1] + 2] = 2;
+                map[current_map_idx][my_location[0]][my_location[1] + 1] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[1] += 1;
+                break; 
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] + 2] == 6)
+                break;
+        } // end if 6
+        // END SWITCH KEY_RIGHT
+
+     case KEY_LEFT:
+        if (map[current_map_idx][my_location[0]][my_location[1] - 1] == 1)
+            break;
+        if (map[current_map_idx][my_location[0]][my_location[1] - 1] == 2) {
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 1)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 2)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 3) {
+                map[current_map_idx][my_location[0]][my_location[1] - 2] = 6;
+                map[current_map_idx][my_location[0]][my_location[1] - 1] = 5;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[1] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 4) {
+                map[current_map_idx][my_location[0]][my_location[1] - 2] = 2;
+                map[current_map_idx][my_location[0]][my_location[1] - 1] = 5;
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                my_location[1] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 6)
+                break;
+        } // end if 2
+        if (map[current_map_idx][my_location[0]][my_location[1] - 1] == 3) {
+            map[current_map_idx][my_location[0]][my_location[1] - 1] = 7;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            break;
+        } // end if 3
+        if (map[current_map_idx][my_location[0]][my_location[1] - 1] == 4) {
+            map[current_map_idx][my_location[0]][my_location[1] - 1] = 5;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                map[current_map_idx][my_location[0]][my_location[1]] = 3;
+            if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                map[current_map_idx][my_location[0]][my_location[1]] = 4;
+            my_location[1] += 1;
+            break;
+        } // end if 4
+        if (map[current_map_idx][my_location[0]][my_location[1] - 1] == 6) {
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 1)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 2)
+                break;
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 3) {
+                map[current_map_idx][my_location[0]][my_location[1] - 2] = 6;
+                map[current_map_idx][my_location[0]][my_location[1] - 1] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[1] += 1;
+                break;
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 4) {
+                map[current_map_idx][my_location[0]][my_location[1] - 2] = 2;
+                map[current_map_idx][my_location[0]][my_location[1] - 1] = 7;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 5)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 4;
+                if (map[current_map_idx][my_location[0]][my_location[1]] == 7)
+                    map[current_map_idx][my_location[0]][my_location[1]] = 3;
+                my_location[1] += 1;
+                break; 
+            }
+            if (map[current_map_idx][my_location[0]][my_location[1] - 2] == 6)
+                break;
+        } // end if 6
+        // END SWITCH KEY_LEFT
+       
  } // end switch
  erase();
  Map(current_map_idx);
