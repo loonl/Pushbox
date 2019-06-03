@@ -42,7 +42,6 @@ int main() {
 	initscr();
 	keypad(stdscr, TRUE);
 	for (int i = 0; i < 2; i++) { // number of maps 
- // using while(answer == now box location) and implement this code there
 		Map(i);
 		while (true) {
 			push(i);
